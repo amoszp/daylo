@@ -31,11 +31,37 @@ const shortDate = (d) => `${DOW[dowIdx(d)]} ${d.getDate()} ${MONS[d.getMonth()]}
 
 // Keeps the app pinned to the visible area (address bar, on-screen keyboard).
 function setAppHeight() {
-  const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  document.documentElement.style.setProperty('--app-h', `${h}px`);
+  const vv = window.visualViewport;
+  document.documentElement.style.setProperty('--app-h', `${vv ? vv.height : window.innerHeight}px`);
+  document.documentElement.style.setProperty('--app-top', `${vv ? vv.offsetTop : 0}px`);
+  updateKeyboard();
+}
+
+// While the on-screen keyboard is up, the tab bar steps aside and toasts move to the top,
+// so the list being typed into keeps the room (the bar would otherwise ride on the keyboard).
+const TYPING = 'input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]), textarea';
+const coarse = matchMedia('(pointer: coarse)');
+function keyboardOpen() {
+  const el = document.activeElement;
+  if (!el || !el.matches?.(TYPING)) return false;
+  const vv = window.visualViewport;
+  const shrunk = vv ? vv.height < window.innerHeight * 0.8 : false;
+  return coarse.matches || shrunk;
+}
+function updateKeyboard() {
+  const app = document.getElementById('app');
+  if (app) app.classList.toggle('kb', keyboardOpen());
 }
 setAppHeight();
-(window.visualViewport || window).addEventListener('resize', setAppHeight);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setAppHeight);
+  window.visualViewport.addEventListener('scroll', setAppHeight);
+} else {
+  window.addEventListener('resize', setAppHeight);
+}
+document.addEventListener('focusin', updateKeyboard);
+// Focus can hop from one field to the next without the keyboard closing: decide after it lands.
+document.addEventListener('focusout', () => setTimeout(updateKeyboard, 60));
 
 /* ---------- shift types ---------- */
 const TYPES = {
@@ -354,7 +380,9 @@ function render() {
 let toastTimer = null, undoFn = null;
 function toast(msg, undo) {
   $('#toast-msg').textContent = msg; undoFn = undo || null; $('#toast-undo').hidden = !undo;
-  $('#toast').classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('on'), 5000);
+  // Shorter while typing: it sits at the top then, over whatever is scrolled there.
+  const ms = $('#app').classList.contains('kb') ? 2500 : 5000;
+  $('#toast').classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('on'), ms);
 }
 $('#toast-undo').addEventListener('click', () => { const f = undoFn; undoFn = null; $('#toast').classList.remove('on'); if (f) f(); });
 
@@ -587,8 +615,31 @@ $('#app').addEventListener('submit', (e) => {
   if (!v || pack.some((p) => norm(p.name) === norm(v))) return;
   const item = { id: uid(), name: v, done: false, creado: Date.now() };
   pack.push(item); savePack(item); render();
-  setTimeout(() => $('#newitem')?.focus(), 30);
+  keepTyping(item.id);
   toast(`${v} añadido`, () => { pack.splice(pack.indexOf(item), 1); deletePack(item); render(); });
+});
+/**
+ * After adding an item: the field keeps the focus (and the keyboard stays up), the field sits
+ * at the top of the visible list, and the new item is shown if it fits below it.
+ */
+function keepTyping(newId) {
+  const field = $('#newitem');
+  if (!field) return;
+  field.focus({ preventScroll: true });
+  requestAnimationFrame(() => {
+    const view = $('#view'), form = $('#addform');
+    const row = newId && document.querySelector(`.chk[data-pack="${CSS.escape(newId)}"]`);
+    const pad = parseFloat(getComputedStyle(view).scrollPaddingTop) || 0;
+    const top = (el) => el.getBoundingClientRect().top - view.getBoundingClientRect().top + view.scrollTop;
+    const fieldTop = Math.max(0, top(form) - pad);
+    // Scroll just enough to show the new item, but never past the field.
+    const need = row ? top(row) + row.offsetHeight - view.clientHeight : view.scrollTop;
+    view.scrollTop = Math.min(fieldTop, Math.max(view.scrollTop, need));
+  });
+}
+$('#app').addEventListener('focusin', (e) => {
+  // The search field stays in view above the keyboard (and below a top toast).
+  if (e.target.id === 'newitem') setTimeout(() => e.target.scrollIntoView({ block: 'nearest' }), 300);
 });
 $('#app').addEventListener('input', (e) => {
   if (e.target.id === 'newitem') { filterPack(); return; }

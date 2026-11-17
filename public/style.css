@@ -55,7 +55,7 @@ body { background: #F9F7F4; -webkit-font-smoothing: antialiased; -webkit-text-si
 .empty.first, .stack.first { margin-top: 0; }
 .wk.flush, .hint.tight { margin: 0; }
 
-.app { position: fixed; inset: 0; height: var(--app-h, 100%); overflow: hidden; background: var(--bg); color: var(--ink);
+.app { position: fixed; inset: 0; top: var(--app-top, 0px); height: var(--app-h, 100%); overflow: hidden; background: var(--bg); color: var(--ink);
   display: flex; flex-direction: column; font-family: var(--font); font-size: var(--t-m); font-variant-numeric: tabular-nums; }
 .main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
@@ -261,4 +261,10 @@ textarea { width: 100%; height: 220px; resize: none; border: 0; border-radius: v
 .toast span { flex: 1; }
 .toast button { height: var(--tap); padding: 0 var(--s3); font-weight: 700; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--r-s); }
 .toast button svg { width: 18px; height: 18px; }
+/* Keyboard up: the tab bar steps aside, toasts move to the top and stay compact,
+   and scrolling keeps the field clear of a top toast. */
+.app.kb .nav { display: none; }
+.app.kb .toast { top: calc(env(safe-area-inset-top, 0px) + var(--s2)); bottom: auto; min-height: var(--tap); transform: translateY(-20px); }
+.app.kb .toast.on { transform: none; }
+.app.kb .scroll { scroll-padding-top: calc(var(--tap) + var(--s4)); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
