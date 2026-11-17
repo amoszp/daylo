@@ -282,8 +282,8 @@ function renderMonth() {
   let h = wkHTML() + gridHTML(y, m, false);
   const { c, n } = counts(y, m);
   if (n) {
-    h += `<div class="tally">${ORDER.map((k) => `<span><span class="badge sm k-${k}">${ico(TYPES[k].icon)}</span><b>${c[k]}</b>${TYPES[k].name}</span>`).join('')}${
-      [['office', 'buildings-fill', 'Oficina'], ['car', 'car-fill', 'En coche'], ['bus', 'bus-fill', 'En guagua']].map(([k, ic, nm]) => `<span><span class="badge sm k-off">${ico(ic)}</span><b>${c[k]}</b>${nm}</span>`).join('')}</div>`;
+    h += `<div class="tally" aria-label="Leyenda del mes">${ORDER.map((k) => `<span><span class="badge sm k-${k}">${ico(TYPES[k].icon)}</span><span class="tn">${TYPES[k].name}</span><b>${c[k]}</b></span>`).join('')}${
+      [['office', 'buildings-fill', 'Oficina'], ['car', 'car-fill', 'En coche'], ['bus', 'bus-fill', 'En guagua']].map(([k, ic, nm]) => `<span><span class="badge sm k-off">${ico(ic)}</span><span class="tn">${nm}</span><b>${c[k]}</b></span>`).join('')}</div>`;
   } else h += emptyHTML(ui.month);
   $('#view').innerHTML = h;
 }
@@ -317,7 +317,8 @@ function renderOffice() {
   const done = pack.filter((p) => p.done).length;
   h += `<div class="pack-head"><h4>Qué llevar</h4>${pack.length ? `<button class="linkbtn press" id="pack-edit">${ui.packEdit ? 'Hecho' : 'Editar lista'}</button>` : ''}</div>
     <div class="list"><form class="addrow" id="addform" role="search"><input id="newitem" placeholder="Busca o añade algo" aria-label="Buscar o añadir a la lista" autocomplete="off" enterkeyhint="done" maxlength="80"><button class="btn secondary press" id="packadd" type="submit" hidden>${ico('plus')}Añadir</button></form>${
-      pack.map((p) => `<div class="chk" role="checkbox" tabindex="0" aria-checked="${p.done}" data-pack="${p.id}">${ico(p.done ? 'check-square-fill' : 'square', 'i box')}<span class="nm">${esc(p.name)}</span>${
+      // Ticked items first (Moe), each group in the order it was added.
+      [...pack.filter((p) => p.done), ...pack.filter((p) => !p.done)].map((p) => `<div class="chk" role="checkbox" tabindex="0" aria-checked="${p.done}" data-pack="${p.id}">${ico(p.done ? 'check-square-fill' : 'square', 'i box')}<span class="nm">${esc(p.name)}</span>${
         ui.packEdit ? `<button class="del press" data-del="${p.id}" aria-label="Quitar ${esc(p.name)}">${ico('trash')}</button>` : ''}</div>`).join('')}
     </div>
     ${pack.length ? `<div class="progress"><b>${done} de ${pack.length}</b> en la mochila</div>

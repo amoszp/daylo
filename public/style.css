@@ -129,9 +129,10 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 /* Month: the whole day in the shift's colour; date on top, icon in the middle */
 .wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--ink-3); text-align: center; margin: var(--s2) 0 6px; text-transform: uppercase; }
 .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.cell { aspect-ratio: .8; border-radius: var(--r-s); background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0; min-width: 0; box-shadow: inset 0 0 0 1px var(--line); width: 100%; }
-.cell .n { font-size: var(--t-xs); line-height: 16px; font-weight: 700; }
-.cell svg { width: 20px; height: 20px; }
+/* The month is the main thing on this screen: taller days, a light legend under it. */
+.cell { aspect-ratio: .6; border-radius: var(--r-s); background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0; min-width: 0; box-shadow: inset 0 0 0 1px var(--line); width: 100%; }
+.cell .n { font-size: var(--t-s); line-height: 16px; font-weight: 700; }
+.cell svg { width: 22px; height: 22px; }
 .cell.has { box-shadow: none; }
 .cell.k-early { background: var(--early); color: var(--on-early); } .cell.k-mid { background: var(--mid); color: var(--on-mid); }
 .cell.k-late { background: var(--late); color: var(--on-late); } .cell.k-train { background: var(--train); color: var(--on-train); }
@@ -141,13 +142,16 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .cell.out { background: none; box-shadow: none; }
 .cell.out .n { color: var(--ink-3); opacity: .5; }
 .cell.nodata .n { color: var(--ink-3); }
-.cell .ph { width: 20px; height: 20px; display: block; }
+.cell .ph { width: 22px; height: 22px; display: block; }
 .cell .om { width: 12px; height: 12px; display: block; }
 .cell .om svg { width: 12px; height: 12px; display: block; }
 .cell:disabled { cursor: default; }
-.tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2); margin-top: var(--s5); }
-.tally > span { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: var(--s3) 0; border-radius: var(--r-m); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-size: var(--t-xs); color: var(--ink-2); font-weight: 600; text-align: center; }
-.tally b { color: var(--ink); font-size: var(--t-l); }
+.tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2) var(--s3); margin-top: var(--s4); padding-top: var(--s3); border-top: 1px solid var(--line); }
+.tally > span { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: var(--t-xs); color: var(--ink-2); font-weight: 500; }
+.tally .badge.sm { width: 20px; height: 20px; border-radius: 5px; flex: none; }
+.tally .badge.sm svg { width: 12px; height: 12px; }
+.tally .tn { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
+.tally b { color: var(--ink); font-weight: 700; }
 
 .empty { margin-top: var(--s5); padding: var(--s5) var(--s4); border-radius: var(--r-l); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: var(--s2); justify-items: start; }
 .empty h3 { margin: 0; font-size: var(--t-l); }
@@ -173,8 +177,10 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .chk { display: flex; align-items: center; gap: var(--s3); min-height: 56px; padding: 0 var(--s2) 0 var(--s4); width: 100%; text-align: left; cursor: pointer; }
 .chk + .chk, .addrow + .chk { border-top: 1px solid var(--line); }
 .chk .box { width: 24px; height: 24px; color: var(--ink-3); flex: none; }
-.chk[aria-checked="true"] .box { color: var(--accent); }
-.chk[aria-checked="true"] .nm { color: var(--ink-3); text-decoration: line-through; }
+/* Packed: greyed out, no strike-through. */
+.chk[aria-checked="true"] { background: var(--sunk); }
+.chk[aria-checked="true"] .box { color: var(--ink-3); }
+.chk[aria-checked="true"] .nm { color: var(--ink-3); }
 .chk .nm { flex: 1; font-weight: 500; overflow-wrap: anywhere; padding-block: var(--s2); }
 .chk .del { width: var(--tap); height: var(--tap); display: grid; place-items: center; color: var(--danger); flex: none; }
 .addrow { display: flex; align-items: center; gap: var(--s2); padding: var(--s2) var(--s2) var(--s2) var(--s4); margin: 0; }
