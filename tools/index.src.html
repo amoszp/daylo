@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Daylo</title>
+<meta name="theme-color" content="#F9F7F4" id="theme-color">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Daylo">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="stylesheet" href="/style.css">
+<script type="module" src="/app.js"></script>
+</head>
+<body>
+<svg class="sprite" width="0" height="0" aria-hidden="true"><defs><!--SPRITE--></defs></svg>
+
+<div class="app" id="app" data-mode="system">
+  <div class="boot" id="boot" role="status">Cargando</div>
+
+  <section class="login" id="login" aria-label="Entrar" hidden>
+    <div class="login-in">
+      <img class="login-mark" src="/icon.svg" alt="" width="72" height="72">
+      <form class="login-form" id="f-login" novalidate>
+        <label class="field" id="login-name-wrap" hidden><span>Tu nombre</span><input class="input" id="login-name" autocomplete="name" maxlength="80"></label>
+        <label class="field"><span>Usuario</span><input class="input" id="login-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="64"></label>
+        <label class="field"><span>Contraseña</span><input class="input" id="login-pass" type="password" autocomplete="current-password" maxlength="256"></label>
+        <p class="login-err" id="login-err" role="alert" hidden></p>
+        <button class="btn primary full press" type="submit" id="login-go" disabled>Entrar</button>
+        <button class="btn plain full press" type="button" id="login-switch">Crear una cuenta</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="main" id="main" hidden>
+    <div class="offline" id="offline" role="status" hidden><svg class="i" aria-hidden="true"><use href="#i-wifi-slash"/></svg>Sin conexión. Los cambios se guardarán al volver.</div>
+    <header class="top" id="top">
+      <div class="tb-slot left"><button class="iconbtn press" id="prev" aria-label="Anterior"><svg class="i"><use href="#i-caret-left"/></svg></button></div>
+      <div class="period" id="period" aria-live="polite"></div>
+      <div class="tb-slot"><button class="todaybtn press" id="today" hidden>Hoy</button><button class="iconbtn press" id="next" aria-label="Siguiente"><svg class="i"><use href="#i-caret-right"/></svg></button></div>
+    </header>
+    <main class="scroll" id="view"></main>
+    <nav class="nav" aria-label="Secciones">
+      <button class="press" data-tab="week" aria-current="page"><svg class="i"><use href="#i-rows-fill"/></svg>Semana</button>
+      <button class="press" data-tab="month"><svg class="i"><use href="#i-calendar-dots"/></svg>Mes</button>
+      <button class="press" data-tab="office"><svg class="i"><use href="#i-buildings"/></svg>Oficina</button>
+      <button class="press" data-tab="settings"><svg class="i"><use href="#i-gear-six"/></svg>Ajustes</button>
+    </nav>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title">
+    <div class="sh-head"><h3 id="sh-title"></h3><button class="iconbtn press" id="sh-close" aria-label="Cerrar"><svg class="i"><use href="#i-x"/></svg></button></div>
+    <div class="sh-body" id="sh-body"></div>
+  </section>
+  <div class="toast" id="toast" role="status"><span id="toast-msg"></span><button id="toast-undo" class="press"><svg class="i" aria-hidden="true"><use href="#i-arrow-counter-clockwise"/></svg>Deshacer</button></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "daylo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shift calendar for rotating work schedules: week and month views, paste-the-roster import, office days and a packing list",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test test/server.test.js"
+  }
+}

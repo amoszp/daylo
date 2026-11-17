@@ -1,0 +1,18 @@
+# One container serving the API, the PWA and the calendar feed.
+# The image is built by .github/workflows/deploy.yml and pulled from GHCR.
+# Usage: docker compose pull && docker compose up -d
+services:
+  daylo:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-amoszp}/daylo:${DAYLO_TAG:-latest}
+    container_name: daylo
+    restart: unless-stopped
+    # Host networking: the accounts service listens on the host's loopback only.
+    network_mode: host
+    environment:
+      - PORT=${DAYLO_PORT:-1115}
+      - ACCOUNTS_URL=${ACCOUNTS_URL:-http://127.0.0.1:4600}
+      - ACCOUNTS_SERVICE_TOKEN=${ACCOUNTS_SERVICE_TOKEN:?set ACCOUNTS_SERVICE_TOKEN in .env}
+      - COOKIE_SECURE=${COOKIE_SECURE:-true}
+    volumes:
+      # Owned by uid 1000 (the image's "node" user): the SQLite database.
+      - ./data:/data
